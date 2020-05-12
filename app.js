@@ -8,6 +8,7 @@ const chalk = require('chalk');
 const dotenv = require("dotenv");
 dotenv.config();
 
+//Added start script
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
