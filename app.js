@@ -8,7 +8,7 @@ const chalk = require('chalk');
 const dotenv = require("dotenv");
 dotenv.config();
 
-//Added start script
+//Added start script and removed quotes from env
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
