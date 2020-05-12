@@ -14,12 +14,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 app.get('/', (req, res) => {
-    res.send({
-        statusCode: 200,
+    res.status(200).send({
         payload: {
             msg: "The Backend is healthy and running",
         },
-    }).status(200)
+    })
 })
 
 //Route imports
