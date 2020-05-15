@@ -230,5 +230,6 @@ module.exports = {
     checkUserObject,
     createProblemStatement,
     lockProblem,
+    submitLink,
     addCount
 }
