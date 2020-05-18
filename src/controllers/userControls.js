@@ -15,7 +15,8 @@ const createUser = (user) => {
             name: user.name,
             task: "",
             link1: "",
-            link2: ""
+            count: 10,
+            submittedTask:false
         })
             .then((resp) => {
                 console.log(chalk.green("New user details saved in db"))
@@ -163,9 +164,15 @@ const createProblemStatement = (uid, isLock1, isLock2, isLock3) => {
 
 const lockProblem = (uid, value1, value2, value3) => {
     return new Promise(async(resolve, reject) => {
-        task = "Design a "+value1+" for "+value2+" to help "+value3;
         try {
-            const userRef = await database.collection('Users').doc(uid).update({task:task})
+            task = "Design a "+value1+" for "+value2+" to help "+value3;
+            const userRef = await database.collection('Users').doc(uid).update({
+                task:task,
+                submittedTask:true,
+                design:value1,
+                forA:value2,
+                toHelp:value3
+            })
             resolve({
                 payload: {
                     message: "Successfully stored task"
@@ -210,7 +217,8 @@ const addCount = () => {
             const promises = []
             snapshot.forEach(doc => {
                 promises.push(doc.ref.set({
-                    count:5
+                    count:5,
+                    submittedTask:false
                 }))
             })
         })
@@ -218,6 +226,27 @@ const addCount = () => {
         resolve({
             payload: {
                 "done":"done"
+            }
+        })
+    })
+}
+
+const checkIfTaskSubmitted = (uid) => {
+    return new Promise(async(resolve, reject) => {
+        const userRef = await database.collection('Users').doc(uid).get().then((doc)=> {
+            count = doc.data().count
+            submittedTask = doc.data().submittedTask,
+            design = doc.data().design,
+            forA = doc.data().forA,
+            toHelp = doc.data().toHelp
+        })
+        resolve({
+            payload: {
+                count:count,
+                submittedTask:submittedTask,
+                design:design,
+                forA:forA,
+                toHelp:toHelp
             }
         })
     })
@@ -231,5 +260,6 @@ module.exports = {
     createProblemStatement,
     lockProblem,
     submitLink,
-    addCount
+    addCount,
+    checkIfTaskSubmitted
 }

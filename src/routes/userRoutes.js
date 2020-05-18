@@ -9,6 +9,14 @@ router.post('/create',[userCreate], (req, res) => {
         .catch(err => res.status(400).send(err))
 })
 
+router.get('/checkSubmitted',[userAuth], (req, res) => {
+    userControls.checkIfTaskSubmitted(
+        req.body.uid
+    )
+        .then(resp => res.status(200).send(resp))
+        .catch(err => res.status(400).send(err))
+})
+
 router.post('/generateProblem',[userAuth], (req, res) => { //[userAuth],
     userControls.createProblemStatement(
         req.body.uid,

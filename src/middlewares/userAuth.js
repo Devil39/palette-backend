@@ -7,6 +7,7 @@ const userAuth = async (req, res, next) => {
             throw new Error("Unauthorized")
         }
         const uid = req.header("Authorization").replace("Bearer ", "")
+        console.log(uid)
         await checkUserUid(uid)
         await checkUserObject(uid)
         req.body.uid = uid
