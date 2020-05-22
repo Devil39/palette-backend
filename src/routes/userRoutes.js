@@ -48,22 +48,30 @@ router.post('/submitLink',[userAuth], (req, res) => {
         .catch(err => res.status(400).send(err))
 })
 
-router.get('/addCount', (req,res) => {
-    userControls.addCount()
-    .then(resp => res.status(200).send(resp))
-    .catch(err => res.status(400).send(err))
+router.get('/countSubmittedTasks', (req, res) => {
+    userControls.countSubmits()
+        .then(resp => res.status(200).send(resp))
+        .catch(err => res.status(400).send(err))
 })
 
-router.get('/getSubmittedParticipants', (req,res) => {
-    userControls.getSubmittedParticipants()
-    .then(resp => res.status(200).send(resp))
-    .catch(err => res.status(400).send(err))
-});
-
-router.get('/getAllEmails', (req,res) => {
+router.get('/listAllUsers', (req, res) => {
     userControls.listAllUsers()
-    // .then(resp => res.status(200).send(resp))
-    // .catch(err => res.status(400).send(err))
-});
+        .then(resp => res.status(200).send(resp))
+        .catch(err => res.status(400).send(err))
+})
+
+router.get('/listDetails', (req, res) => {
+    userControls.getEmailAndTasks()
+        .then(resp => res.status(200).send(resp))
+        .catch(err => res.status(400).send(err))
+})
+
+router.get('/getParticipantsNotSubmitted', (req, res) => {
+    userControls.getParticipantsNotSubmitted()
+        .then(resp => res.status(200).send(resp))
+        .catch(err => res.status(400).send(err))
+})
 
 module.exports = router;
+
+//push new build

@@ -2,9 +2,9 @@ const { admin, database } = require('../utils/firebase')
 const chalk = require('chalk')
 const FieldValue = require('firebase-admin').FieldValue;
 
-var design = ['mobile app', 'website', 'tv interface', 'app interface'];
-var forA = ['a restaurant in Brazil', 'a watch shop in Germany', 'a clothing shop in Dharavi', 'an ice cream parlour in Hawaii', 'a juice shop in Iceland', 'a tree in a desert', 'a book shop', 'bottle in San Jose', 'a devil in Heaven', 'a chair in IEEE']
-var toHelp = ['a man in Brazil', 'to flash a torch', 'get groceries', 'animals get happy', 'redo an ML model', 'trains go faster', 'Pablo Escobar in Katpadi', 'relax your mind', 'too lazy to think', 'a chair in IEEE']
+var designArray = ['an Android App', 'an iOS app', 'a TV OS', 'a Website'];
+var forArray = ['a dating platform', 'a food delivery service', 'a helpline service', 'a medicine delivery service', 'an employment agency', 'a mental health support platform', 'an automobile seller', 'a travel booking service', 'Streaming Service']
+var toHelpArray = ['Vampires with diabetes', 'Magicians with selfesteem issues', 'Aliens residing in Area 51', 'detectives with anterograde amnesia', 'Astronauts', 'upcoming Dictators', 'Time travellers', 'Pets who are secret agents', 'criminals on the run']
 
 const createUser = (user) => {
     return new Promise((resolve, reject) => {
@@ -15,8 +15,8 @@ const createUser = (user) => {
             name: user.name,
             task: "",
             link1: "",
-            count: 10,
-            submittedTask:false
+            count: 3,
+            submittedTask:false,
         })
             .then((resp) => {
                 console.log(chalk.green("New user details saved in db"))
@@ -116,43 +116,51 @@ const createProblemStatement = (uid, isLock1, isLock2, isLock3) => {
     return new Promise(async(resolve, reject) => {
         try {
             console.log(chalk.yellow("Getting new problem statement..."))
-            const userRef = await database.collection('Users').doc(uid).get().then((doc)=> {
+            const userRef = await database.collection('Users').doc(uid).get()
+            .then((doc)=> {
                 count = doc.data().count
+                return count
             })
-            if(count > 0) {
-                if(isLock1===false) {
-                    newDesign = design[Math.floor(Math.random() * 4)]
-                } else {
-                    newDesign = "Locked"
-                }
-                if(isLock2===false) {
-                    newTo = forA[Math.floor(Math.random() * 10)]
-                } else {
-                    newTo = "Locked"
-                }
-                if(isLock3===false) {
-                    newToHelp = toHelp[Math.floor(Math.random() * 5)]
-                } else {
-                    newToHelp = "Locked"
-                }
-                resolve({
-                    payload: {
-                        newDesign: newDesign,
-                        newTo: newTo,
-                        newToHelp: newToHelp,
-                        count: count
+            .then(async(count) => {
+                if(count >= 0) {
+                    if(isLock1===false) {
+                        newDesign = designArray[Math.floor(Math.random() * 3)]
+                    } else {
+                        newDesign = "Locked"
                     }
-                })
-                const userRef = await database.collection('Users').doc(uid).update({count : admin.firestore.FieldValue.increment(-1) })
-            } else {
-                resolve({
-                    payload: {
-                        count: "0",
-                        message: "No more tries left"
+                    if(isLock2===false) {
+                        newTo = forArray[Math.floor(Math.random() * 9)]
+                    } else {
+                        newTo = "Locked"
                     }
-                })
-            }
+                    if(isLock3===false) {
+                        newToHelp = toHelpArray[Math.floor(Math.random() * 9)]
+                    } else {
+                        newToHelp = "Locked"
+                    }
+                    console.log(newDesign, newTo, newToHelp)
+                    const userRef = await database.collection('Users').doc(uid).update({count : admin.firestore.FieldValue.increment(-1) })
+                    resolve({
+                        payload: {
+                            newDesign: newDesign,
+                            newTo: newTo,
+                            newToHelp: newToHelp,
+                            count: count-1
+                        }
+                    })
+
+                } else {
+                    resolve({
+                        payload: {
+                            count: "0",
+                            message: "No more tries left"
+                        }
+                    })
+                }
+            })
+            
         } catch(e) {
+            console.log(e);
             reject({
                 payload: {
                     message: "Something went wrong with generating problem statement. Please try again"
@@ -209,44 +217,29 @@ const submitLink = (uid, link) => {
     })
 }
 
-const promises = []
-const addCount = () => {
-    return new Promise(async(resolve, reject) => {
-        const userRef = await database.collection('Users').get()
-        .then(snapshot => {
-            const promises = []
-            snapshot.forEach(doc => {
-                promises.push(doc.ref.set({
-                    count:5,
-                    submittedTask:false
-                }))
-            })
-        })
-        await Promise.all(promises)
-        resolve({
-            payload: {
-                "done":"done"
-            }
-        })
-    })
-}
-
-const getSubmittedParticipants = () => {
-    return new Promise(async(resolve, reject) => {
-        const userRef = await database.collection('Users').get()
-        .then(snapshot => {
-            // console.log(snapshot);
-            snapshot.forEach(doc => {
-                console.log(doc.data.toString());
-            });
-        })
-        resolve({
-            payload: {
-                "done":"done"
-            }
-        })
-    })
-}
+// const promises = []
+// const addCount = () => {
+//     return new Promise(async(resolve, reject) => {
+//         const userRef = await database.collection('Users').get()
+//         .then(snapshot => {
+//             const promises = []
+//             snapshot.forEach(doc => {
+//                 promises.push(doc.ref.set({
+//                     count:3,
+//                     submittedTask:false,
+//                     task: "",
+//                     link1: ""
+//                 }))
+//             })
+//         })
+//         await Promise.all(promises)
+//         resolve({
+//             payload: {
+//                 "done":"done"
+//             }
+//         })
+//     })
+// }
 
 const checkIfTaskSubmitted = (uid) => {
     return new Promise(async(resolve, reject) => {
@@ -269,13 +262,87 @@ const checkIfTaskSubmitted = (uid) => {
     })
 }
 
+var countSubmittedTasks = 0
+const countSubmits = () => {
+    return new Promise(async(resolve, reject) => {
+        const userRef = await database.collection('Users').get()
+        .then(snapshot => {
+            snapshot.forEach(doc => {
+                if(doc.data().submittedTask === true) {
+                    countSubmittedTasks++;
+                }
+            })
+            console.log(countSubmittedTasks)
+        })
+        resolve({
+            payload: {
+                "done":"done"
+            }
+        })
+    })
+}
+
+const getEmailAndTasks = () => {
+    return new Promise(async(resolve, reject) => {
+        const userRef = await database.collection('Users').get()
+        .then(snapshot => {
+            snapshot.forEach(async (doc) => {
+                if(doc.data().submittedTask === true) {
+                    // countSubmittedTasks++;
+                    // console.log(doc.id);
+                    // console.log(doc.data().email);
+                    // console.log(doc.data().uid);
+                    await admin.auth().getUser(doc.id)
+                    .then(function(userRecord) {
+                        // console.log(doc);
+                        console.log(userRecord.toJSON().email + ' -- ' + doc.data().task);
+                    })
+                    .catch(function(error) {
+                        console.log('Error fetching user data:', error);
+                    });
+
+                }
+            })
+        })
+        resolve({
+            payload: {
+                "done":"done"
+            }
+        })
+    })
+}
+
+const getParticipantsNotSubmitted = () => {
+    return new Promise(async(resolve, reject) => {
+        const userRef = await database.collection('Users').get()
+        .then(snapshot => {
+            snapshot.forEach(async (doc) => {
+                if(doc.data().submittedTask === false && doc.id!=null) {
+                    await admin.auth().getUser(doc.id)
+                    .then(function(userRecord) {
+                        console.log(userRecord.toJSON().email);
+                    })
+                    .catch(function(error) {
+                        console.log('Error fetching user data:', error);
+                    })
+
+                }
+            })
+        })
+        resolve({
+            payload: {
+                "done":"done"
+            }
+        })
+    })
+}
+
 function listAllUsers(nextPageToken) {
     // List batch of users, 1000 at a time.
-    return new Promise(async(resolve, reject) => {
-    await admin.auth().listUsers(1000, nextPageToken)
+    admin.auth().listUsers(1000, nextPageToken)
       .then(function(listUsersResult) {
         listUsersResult.users.forEach(function(userRecord) {
-          console.log('user', userRecord.toJSON().email);
+          console.log(userRecord.toJSON().email);
         });
         if (listUsersResult.pageToken) {
           // List next batch of users.
@@ -285,14 +352,7 @@ function listAllUsers(nextPageToken) {
       .catch(function(error) {
         console.log('Error listing users:', error);
       });
-      resolve({
-        payload: {
-            "done":"done"
-        }
-    })
-  });
-}
-  
+  }
 
 module.exports = {
     createUser,
@@ -302,8 +362,9 @@ module.exports = {
     createProblemStatement,
     lockProblem,
     submitLink,
-    addCount,
     checkIfTaskSubmitted,
-    getSubmittedParticipants,
+    countSubmits,
     listAllUsers,
+    getEmailAndTasks,
+    getParticipantsNotSubmitted
 }
