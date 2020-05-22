@@ -7,19 +7,29 @@ const userLogin = async (req, res, next) => {
             throw new Error("Unauthorized")
         }
         const uid = req.header("Authorization").replace("Bearer ", "")
-        await checkUserUid(uid)
         await checkUserObject(uid)
-        res.status(200).send({
-            statusCode: 200,
-            payload: {
-                msg: "User verified"
-            }
+        .then(() => {
+            res.status(200).send({
+                statusCode: 200,
+                payload: {
+                    msg: "User verified"
+                }
+            })
         })
+        .catch(() => {
+            res.status(400).send({
+                statusCode: 400,
+                payload: {
+                    msg: "User not verified"
+                }
+            })
+        })
+        
     } catch (error) {
         res.status(400).send({
-            statusCode: 400,
+            statusCode: 404,
             payload: {
-                msg: "Not verified"
+                msg: "Not found"
             }
         })
     }

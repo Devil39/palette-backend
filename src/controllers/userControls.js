@@ -67,13 +67,22 @@ const checkUserObject = (uid, resp) => {
         userRef.get()
             .then((docSnapshot) => {
                 console.log("got docSnapshot")
-                if (docSnapshot.exists) {
+                console.log(docSnapshot)
+                if (docSnapshot._fieldsProto !== undefined) {
                     console.log(docSnapshot.exists)
                     resolve({
                         statusCode: 200,
                         payload: {
                             msg: "User Checked",
                             responce: resp
+                        }
+                    })
+                } else {
+                    console.log("400")
+                    reject({
+                        statusCode: 400,
+                        payload: {
+                            msg: "User not found"
                         }
                     })
                 }
