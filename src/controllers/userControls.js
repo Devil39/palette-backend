@@ -270,6 +270,5 @@ module.exports = {
     createProblemStatement,
     lockProblem,
     submitLink,
-    addCount,
     checkIfTaskSubmitted
 }
