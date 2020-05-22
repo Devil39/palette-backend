@@ -231,6 +231,23 @@ const addCount = () => {
     })
 }
 
+const getSubmittedParticipants = () => {
+    return new Promise(async(resolve, reject) => {
+        const userRef = await database.collection('Users').get()
+        .then(snapshot => {
+            // console.log(snapshot);
+            snapshot.forEach(doc => {
+                console.log(doc.data.toString());
+            });
+        })
+        resolve({
+            payload: {
+                "done":"done"
+            }
+        })
+    })
+}
+
 const checkIfTaskSubmitted = (uid) => {
     return new Promise(async(resolve, reject) => {
         const userRef = await database.collection('Users').doc(uid).get().then((doc)=> {
@@ -252,6 +269,31 @@ const checkIfTaskSubmitted = (uid) => {
     })
 }
 
+function listAllUsers(nextPageToken) {
+    // List batch of users, 1000 at a time.
+    return new Promise(async(resolve, reject) => {
+    await admin.auth().listUsers(1000, nextPageToken)
+      .then(function(listUsersResult) {
+        listUsersResult.users.forEach(function(userRecord) {
+          console.log('user', userRecord.toJSON().email);
+        });
+        if (listUsersResult.pageToken) {
+          // List next batch of users.
+          listAllUsers(listUsersResult.pageToken);
+        }
+      })
+      .catch(function(error) {
+        console.log('Error listing users:', error);
+      });
+      resolve({
+        payload: {
+            "done":"done"
+        }
+    })
+  });
+}
+  
+
 module.exports = {
     createUser,
     checkUserUid,
@@ -261,5 +303,7 @@ module.exports = {
     lockProblem,
     submitLink,
     addCount,
-    checkIfTaskSubmitted
+    checkIfTaskSubmitted,
+    getSubmittedParticipants,
+    listAllUsers,
 }
