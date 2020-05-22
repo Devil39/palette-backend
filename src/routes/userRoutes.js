@@ -48,6 +48,18 @@ router.post('/submitLink',[userAuth], (req, res) => {
         .catch(err => res.status(400).send(err))
 })
 
+router.get('/countSubmittedTasks', (req, res) => {
+    userControls.countSubmits()
+        .then(resp => res.status(200).send(resp))
+        .catch(err => res.status(400).send(err))
+})
+
+router.get('/listAllUsers', (req, res) => {
+    userControls.listAllUsers()
+        .then(resp => res.status(200).send(resp))
+        .catch(err => res.status(400).send(err))
+})
+
 module.exports = router;
 
 //push new build

@@ -262,6 +262,44 @@ const checkIfTaskSubmitted = (uid) => {
     })
 }
 
+var countSubmittedTasks = 0
+const countSubmits = () => {
+    return new Promise(async(resolve, reject) => {
+        const userRef = await database.collection('Users').get()
+        .then(snapshot => {
+            snapshot.forEach(doc => {
+                if(doc.data().submittedTask === true) {
+                    countSubmittedTasks++;
+                }
+            })
+            console.log(countSubmittedTasks)
+        })
+        resolve({
+            payload: {
+                "done":"done"
+            }
+        })
+    })
+}
+
+function listAllUsers(nextPageToken) {
+    // List batch of users, 1000 at a time.
+    admin.auth().listUsers(1000, nextPageToken)
+      .then(function(listUsersResult) {
+        listUsersResult.users.forEach(function(userRecord) {
+          console.log(userRecord.toJSON().email);
+        });
+        if (listUsersResult.pageToken) {
+          // List next batch of users.
+          listAllUsers(listUsersResult.pageToken);
+        }
+      })
+      .catch(function(error) {
+        console.log('Error listing users:', error);
+      });
+  }
+  // Start listing users from the beginning, 1000 at a time.
+
 module.exports = {
     createUser,
     checkUserUid,
@@ -270,5 +308,7 @@ module.exports = {
     createProblemStatement,
     lockProblem,
     submitLink,
-    checkIfTaskSubmitted
+    checkIfTaskSubmitted,
+    countSubmits,
+    listAllUsers
 }
