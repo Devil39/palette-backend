@@ -258,6 +258,7 @@ const checkIfTaskSubmitted = (uid) => {
             design = doc.data().design,
             forA = doc.data().forA,
             toHelp = doc.data().toHelp
+            link1 = doc.data().link1
         })
         resolve({
             payload: {
@@ -265,7 +266,8 @@ const checkIfTaskSubmitted = (uid) => {
                 submittedTask:submittedTask,
                 design:design,
                 forA:forA,
-                toHelp:toHelp
+                toHelp:toHelp,
+                link1:link1
             }
         })
     })
