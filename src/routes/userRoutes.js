@@ -46,14 +46,14 @@ router.get('/checkSubmitted',[userAuth], (req, res) => {
 //         .catch(err => res.status(400).send(err))
 // })
 
-router.post('/submitLink',[userAuth], (req, res) => {
-    userControls.submitLink(
-        req.body.uid,
-        req.body.link
-    )
-        .then(resp => res.status(200).send(resp))
-        .catch(err => res.status(400).send(err))
-})
+// router.post('/submitLink',[userAuth], (req, res) => {
+//     userControls.submitLink(
+//         req.body.uid,
+//         req.body.link
+//     )
+//         .then(resp => res.status(200).send(resp))
+//         .catch(err => res.status(400).send(err))
+// })
 
 module.exports = router;
 
