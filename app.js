@@ -1,18 +1,14 @@
 const express = require('express');
 const app = express();
-const router = express.Router();
 const bodyParser = require("body-parser")
 var cors = require('cors');
-app.use(cors());
-const chalk = require('chalk');
+const userRoute = require('./src/routes/userRoutes');
 const dotenv = require("dotenv");
 dotenv.config();
 
-//Added start script and removed quotes from env
-
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
 
 app.get('/', (req, res) => {
     res.status(200).send({
@@ -22,12 +18,7 @@ app.get('/', (req, res) => {
     })
 })
 
-//Route imports
-const userRoute = require('./src/routes/userRoutes');
-
-//Use Routes
 app.use('/user', userRoute);
-
 
 const port = process.env.PORT || 3000
 app.listen(port, () => {

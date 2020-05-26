@@ -3,7 +3,7 @@ const chalk = require('chalk')
 const FieldValue = require('firebase-admin').FieldValue;
 
 var designArray = ['an Android App', 'an iOS app', 'a TV OS', 'a Website'];
-var forArray = ['a dating platform', 'a food delivery service', 'a helpline service', 'a medicine delivery service', 'an employment agency', 'a mental health support platform', 'an automobile seller', 'a travel booking service', 'Streaming Service']
+var forArray = ['Deep Learning Demystified','a dating platform', 'a food delivery service', 'a helpline service', 'a medicine delivery service', 'an employment agency', 'a mental health support platform', 'an automobile seller', 'a travel booking service', 'Streaming Service']
 var toHelpArray = ['Vampires with diabetes', 'Magicians with selfesteem issues', 'Aliens residing in Area 51', 'detectives with anterograde amnesia', 'Astronauts', 'upcoming Dictators', 'Time travellers', 'Pets who are secret agents', 'criminals on the run']
 
 const createUser = (user) => {
@@ -225,30 +225,6 @@ const submitLink = (uid, link) => {
         }
     })
 }
-
-// const promises = []
-// const addCount = () => {
-//     return new Promise(async(resolve, reject) => {
-//         const userRef = await database.collection('Users').get()
-//         .then(snapshot => {
-//             const promises = []
-//             snapshot.forEach(doc => {
-//                 promises.push(doc.ref.set({
-//                     count:3,
-//                     submittedTask:false,
-//                     task: "",
-//                     link1: ""
-//                 }))
-//             })
-//         })
-//         await Promise.all(promises)
-//         resolve({
-//             payload: {
-//                 "done":"done"
-//             }
-//         })
-//     })
-// }
 
 const checkIfTaskSubmitted = (uid) => {
     return new Promise(async(resolve, reject) => {
